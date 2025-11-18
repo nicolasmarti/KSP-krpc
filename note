@@ -1,0 +1,51 @@
+ratio: x / x = scalar
+g0: m s^-2
+Isp: s
+FlowRate: kg s^-1
+Thrust: kg m s^-2
+density: kg m^-3
+alpha: scalar \in [0.0, 1.0]
+
+Thrust = g0 * Isp * FlowRate
+
+* propelant
+  ~> density
+
+* engine
+  ~> Isp
+  ~> Thrust
+  ~> FlowRate
+  ~> propellant ratio_v: m^3 / m^3
+  ~> ratio(p): kg / kg := density(p) * ratio_v(p) / sum_i density(i) * ratio_v(i) [ sum_p ratio(p) = 1.0]
+  ~> FlowRate(p) = FlowRate * ratio(p) [sum_p FlowRate(p) = FlowRate]
+
+* engine cluster [+ shared ressources]
+  ~> Thrust = sum_e Thrust_e
+  ~> FlowRate = sum_e FlowRate_e
+  ~> Isp = Thrust / g0 / FlowRate
+  ~> compute max for: d_t ~> d_m ~> d_v
+
+* stage (engine clusters) [no sharing]
+  ~> Thrust = sum_c Thrust_c
+  ~> FlowRate = sum_c FlowRate_c
+  ~> Isp = Thrust / g0 / FlowRate
+  ~> compute max for: d_t ~> d_m ~> d_v
+
+~~> backtrack comsumptions, computing d_v per stage [considering auto staging]
+
+## loop
+
+while d_v > 0:
+
+      compute estimated burn time (clamped by minimal time)
+      compute estimated alpha
+      cut if alpha, d_v, d_d_v below threshold
+
+#### structure
+
+- generic functions
+- equations, ...
+- object (vessel, ...) related functions
+
+####
+

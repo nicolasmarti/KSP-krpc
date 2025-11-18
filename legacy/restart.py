@@ -310,8 +310,8 @@ class Vessel( object ):
 
 if __name__ == "__main__":
 
-    address = "192.168.3.2"
-    conn = krpc.connect(name='Landing Site', address=address)
+    address = "127.0.01"
+    conn = krpc.connect(name='Test', address=address)
 
     v = Vessel( conn )
 
